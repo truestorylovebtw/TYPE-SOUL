@@ -8434,7 +8434,14 @@ function PlayerScanning.init()
 
 	-- Connect events.
 	playerScanningMaid:add(friendStatusChanged:connect("PlayerScanning_OnFriendStatusChanged", PlayerScanning.friend))
-	playerScanningMaid:add(renderSteppedSignal:connect("PlayerScanning_Update", PlayerScanning.update))
+	local lastScanTimestamp = os.clock()
+playerScanningMaid:add(renderSteppedSignal:connect("PlayerScanning_Update", function()
+    if os.clock() - lastScanTimestamp < 5 then
+        return
+    end
+    lastScanTimestamp = os.clock()
+    PlayerScanning.update()
+end))
 	playerScanningMaid:add(playerAddedSignal:connect("PlayerScanning_OnPlayerAdded", PlayerScanning.onPlayerAdded))
 	playerScanningMaid:add(
 		playerRemovingSignal:connect("PlayerScanning_OnPlayerRemoving", PlayerScanning.onPlayerRemoving)
